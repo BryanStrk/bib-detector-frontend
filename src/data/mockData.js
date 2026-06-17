@@ -1,0 +1,95 @@
+// Mock data for the Bib Detector UI.
+// Replace these with real API responses from the YOLO backend later.
+
+/**
+ * Detections for the currently-loaded photo.
+ * `box` coordinates are percentages of the image (x, y = top-left corner).
+ */
+export const currentImage = {
+  filename: "marathon_2026_finish_0421.jpg",
+  resolution: "4032 × 3024",
+  processingTime: "1.84s",
+  model: "YOLOv8-bib · v3.2",
+  detections: [
+    { id: "d1", bib: "4092", confidence: 0.98, box: { x: 13, y: 26, w: 17, h: 22 } },
+    { id: "d2", bib: "1187", confidence: 0.93, box: { x: 41, y: 31, w: 15, h: 20 } },
+    { id: "d3", bib: "2056", confidence: 0.81, box: { x: 66, y: 24, w: 16, h: 21 } },
+    { id: "d4", bib: "7734", confidence: 0.64, box: { x: 83, y: 44, w: 13, h: 18 } },
+  ],
+};
+
+/** Full-width system log table rows. */
+export const systemLogs = [
+  {
+    id: "l1",
+    timestamp: "2026-06-17 14:32:08",
+    source: "marathon_2026_finish_0421.jpg",
+    bib: "4092",
+    confidence: 0.98,
+    processingTime: "1.84s",
+  },
+  {
+    id: "l2",
+    timestamp: "2026-06-17 14:32:08",
+    source: "marathon_2026_finish_0421.jpg",
+    bib: "1187",
+    confidence: 0.93,
+    processingTime: "1.84s",
+  },
+  {
+    id: "l3",
+    timestamp: "2026-06-17 14:31:55",
+    source: "marathon_2026_finish_0418.jpg",
+    bib: "0921",
+    confidence: 0.95,
+    processingTime: "1.62s",
+  },
+  {
+    id: "l4",
+    timestamp: "2026-06-17 14:31:40",
+    source: "trail_run_split_0067.jpg",
+    bib: "3310",
+    confidence: 0.88,
+    processingTime: "2.07s",
+  },
+  {
+    id: "l5",
+    timestamp: "2026-06-17 14:31:22",
+    source: "trail_run_split_0067.jpg",
+    bib: "5582",
+    confidence: 0.72,
+    processingTime: "2.07s",
+  },
+  {
+    id: "l6",
+    timestamp: "2026-06-17 14:30:58",
+    source: "cyclocross_lap3_0203.jpg",
+    bib: "1846",
+    confidence: 0.61,
+    processingTime: "1.45s",
+  },
+  {
+    id: "l7",
+    timestamp: "2026-06-17 14:30:31",
+    source: "cyclocross_lap3_0201.jpg",
+    bib: "2207",
+    confidence: 0.99,
+    processingTime: "1.39s",
+  },
+  {
+    id: "l8",
+    timestamp: "2026-06-17 14:29:47",
+    source: "10k_city_start_0009.jpg",
+    bib: "8814",
+    confidence: 0.84,
+    processingTime: "1.91s",
+  },
+];
+
+/** Top-line stats shown as a strip under the navbar. */
+export const stats = [
+  { id: "s1", label: "Photos Processed", value: "1,248" },
+  { id: "s2", label: "Bibs Detected", value: "9,532" },
+  { id: "s3", label: "Avg Confidence", value: "91.4%" },
+  { id: "s4", label: "Avg Latency", value: "1.78s" },
+];
