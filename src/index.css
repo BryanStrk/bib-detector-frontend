@@ -1,1 +1,116 @@
 @import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────────
+   Bib Detector — design tokens (Tailwind v4 @theme)
+   Dark premium dashboard: deep slate base, electric blue→cyan accent.
+   ────────────────────────────────────────────────────────────── */
+@theme {
+  /* Surfaces */
+  --color-canvas: #0f1117;
+  --color-surface: #161922;
+  --color-surface-2: #1c202b;
+  --color-elevated: #21262f;
+
+  /* Borders & lines */
+  --color-line: #262b36;
+  --color-line-strong: #333a47;
+
+  /* Text */
+  --color-ink: #e8ebf2;
+  --color-ink-muted: #9aa3b2;
+  --color-ink-faint: #5d6675;
+
+  /* Accent (electric blue → cyan) */
+  --color-accent: #3b82f6;
+  --color-accent-cyan: #22d3ee;
+  --color-accent-soft: #1e293b;
+
+  /* Confidence semantics */
+  --color-conf-high: #34d399;
+  --color-conf-mid: #fbbf24;
+  --color-conf-low: #f87171;
+
+  /* Typography */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* Radii */
+  --radius-card: 16px;
+  --radius-ctl: 12px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Ambient backdrop glow */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(60rem 40rem at 15% -10%, rgba(59, 130, 246, 0.08), transparent 60%),
+    radial-gradient(50rem 36rem at 110% 10%, rgba(34, 211, 238, 0.06), transparent 55%);
+  pointer-events: none;
+}
+
+/* Consistent, visible focus ring everywhere */
+:where(a, button, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-accent-cyan);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Thin custom scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+  border-radius: 9999px;
+}
+
+/* Confidence bar fill animation */
+@keyframes bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Soft pulsing for "live" indicators */
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
