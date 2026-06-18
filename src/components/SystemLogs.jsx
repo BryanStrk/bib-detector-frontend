@@ -150,10 +150,22 @@ export default function SystemLogs({ logs }) {
               <tr>
                 <td
                   colSpan={COLUMNS.length}
-                  className="px-6 py-10 text-center text-sm text-ink-faint"
+                  className="px-6 py-12 text-center"
                 >
-                  No log entries match{" "}
-                  <span className="font-mono text-ink-muted">“{query}”</span>.
+                  {logs.length === 0 ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <span className="font-mono text-2xl text-ink-faint">[ ]</span>
+                      <p className="text-sm text-ink-muted">No analyses yet</p>
+                      <p className="text-xs text-ink-faint">
+                        Run an analysis to start logging detection jobs.
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-ink-faint">
+                      No log entries match{" "}
+                      <span className="font-mono text-ink-muted">“{query}”</span>.
+                    </p>
+                  )}
                 </td>
               </tr>
             )}
