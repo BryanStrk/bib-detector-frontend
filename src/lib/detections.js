@@ -2,23 +2,79 @@
 // and for scaling pixel bounding boxes to layout-independent percentages.
 
 /**
- * Normalize a POST /detect response into the internal detection model.
- * Keeps `confidence` as 0–1 (ConfidenceBar/tier logic expects that range)
- * and keeps `bbox` in original pixels for later percentage scaling.
+ * Map raw API detections to the internal model. Keeps `confidence` as 0–1
+ * (ConfidenceBar/tier logic expects that range) and keeps `bbox` in original
+ * pixels for later percentage scaling.
  */
+export function mapDetections(raw) {
+  const list = Array.isArray(raw) ? raw : [];
+  return list.map((d, i) => ({
+    id: `det-${i}`,
+    bib: String(d?.bib_number ?? d?.bib ?? "—"),
+    confidence: typeof d?.confidence === "number" ? d.confidence : 0,
+    bbox: Array.isArray(d?.bbox) ? d.bbox : null, // [x, y, w, h] in pixels
+  }));
+}
+
+/** Normalize a POST /detect response into the internal detection model. */
 export function normalizeDetectionResponse(data) {
-  const detections = Array.isArray(data?.detections) ? data.detections : [];
   return {
     filename: data?.filename ?? "upload",
     processingSeconds:
       typeof data?.processing_time === "number" ? data.processing_time : null,
-    detections: detections.map((d, i) => ({
-      id: `det-${i}`,
-      bib: String(d?.bib_number ?? "—"),
-      confidence: typeof d?.confidence === "number" ? d.confidence : 0,
-      bbox: Array.isArray(d?.bbox) ? d.bbox : null, // [x, y, w, h] in pixels
-    })),
+    detections: mapDetections(data?.detections),
   };
+}
+
+/**
+ * Normalize a persisted photo (GET /photos or /photos/{id}) into the model the
+ * gallery renders. Tolerant of field-name variations across the API.
+ */
+export function normalizePhoto(raw) {
+  if (!raw) return null;
+  return {
+    id: String(raw.id ?? raw._id ?? raw.photo_id ?? ""),
+    cloudinaryUrl: raw.cloudinary_url ?? raw.cloudinaryUrl ?? raw.url ?? null,
+    filename: raw.filename ?? "photo",
+    createdAt: raw.created_at ?? raw.createdAt ?? raw.created ?? null,
+    processingSeconds:
+      typeof raw.processing_time === "number" ? raw.processing_time : null,
+    detections: mapDetections(raw.detections),
+  };
+}
+
+/** Unique bib numbers across a photo's detections, each with its best confidence. */
+export function uniqueBibs(detections = []) {
+  const best = new Map();
+  for (const d of detections) {
+    const prev = best.get(d.bib);
+    if (prev == null || d.confidence > prev) best.set(d.bib, d.confidence);
+  }
+  return [...best.entries()].map(([bib, confidence]) => ({ bib, confidence }));
+}
+
+/**
+ * Derive a Cloudinary thumbnail by inserting transformation flags right after
+ * "/upload/" in the delivery URL. Returns the URL unchanged if it isn't a
+ * Cloudinary upload URL.
+ */
+export function cloudinaryThumb(url, transform = "w_500,c_fill,q_auto,f_auto") {
+  if (!url || typeof url !== "string") return url;
+  return url.includes("/upload/")
+    ? url.replace("/upload/", `/upload/${transform}/`)
+    : url;
+}
+
+/** Format a date value as "YYYY-MM-DD HH:mm", or a graceful fallback. */
+export function formatDate(value) {
+  if (!value) return "—";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return String(value);
+  const p = (n) => String(n).padStart(2, "0");
+  return (
+    `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ` +
+    `${p(d.getHours())}:${p(d.getMinutes())}`
+  );
 }
 
 /** Format processing seconds as a mono-friendly string, e.g. 0.42 → "0.42s". */
