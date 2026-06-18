@@ -1,19 +1,44 @@
 import { useId, useMemo, useState } from "react";
-import { SearchIcon, ExportIcon, CopyIcon } from "./Icons";
+import { SearchIcon } from "./Icons";
 import { confidenceTier, formatPct, TIER_STYLES } from "../lib/confidence";
 
 const COLUMNS = [
   { key: "timestamp", label: "Timestamp" },
   { key: "source", label: "File Source" },
-  { key: "bib", label: "Detected Bib" },
+  { key: "detectedCount", label: "Detected Bibs" },
   { key: "confidence", label: "Confidence" },
   { key: "processingTime", label: "Processing Time" },
-  { key: "action", label: "Action" },
+  { key: "status", label: "Status" },
 ];
 
-function ConfidencePill({ value }) {
-  const tier = confidenceTier(value);
-  const styles = TIER_STYLES[tier];
+const STATUS_STYLES = {
+  Processed: "border-conf-high/40 bg-conf-high/10 text-conf-high",
+  Processing: "border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan",
+  Failed: "border-conf-low/40 bg-conf-low/10 text-conf-low",
+};
+
+function StatusBadge({ status }) {
+  const cls = STATUS_STYLES[status] ?? "border-line bg-surface-2 text-ink-muted";
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${cls}`}
+    >
+      <span
+        className="h-1.5 w-1.5 rounded-full bg-current"
+        style={
+          status === "Processing"
+            ? { animation: "pulse-soft 1.4s ease-in-out infinite" }
+            : undefined
+        }
+      />
+      {status}
+    </span>
+  );
+}
+
+function ConfidenceCell({ value }) {
+  if (value == null) return <span className="font-mono text-sm text-ink-faint">—</span>;
+  const styles = TIER_STYLES[confidenceTier(value)];
   return (
     <span className="inline-flex items-center gap-1.5">
       <span className={`h-1.5 w-1.5 rounded-full ${styles.dot}`} />
@@ -30,7 +55,7 @@ export default function SystemLogs({ logs }) {
     const q = query.trim().toLowerCase();
     if (!q) return logs;
     return logs.filter((row) =>
-      [row.timestamp, row.source, row.bib].some((v) =>
+      [row.timestamp, row.source, row.status].some((v) =>
         String(v).toLowerCase().includes(q),
       ),
     );
@@ -49,13 +74,13 @@ export default function SystemLogs({ logs }) {
             System Logs
           </h2>
           <p className="mt-1 text-xs text-ink-faint">
-            Recent detection events across all sources
+            Detection jobs across all sources
           </p>
         </div>
 
         <div className="relative w-full sm:w-72">
           <label htmlFor={searchId} className="sr-only">
-            Search logs by timestamp, file, or bib number
+            Search logs by timestamp, file, or status
           </label>
           <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-faint" />
           <input
@@ -73,8 +98,8 @@ export default function SystemLogs({ logs }) {
       <div className="overflow-x-auto">
         <table className="w-full min-w-[720px] border-collapse text-left">
           <caption className="sr-only">
-            Detection log entries with timestamp, source file, detected bib
-            number, confidence, processing time, and actions.
+            Detection job log with timestamp, source file, number of bibs
+            detected, average confidence, processing time, and status.
           </caption>
           <thead>
             <tr className="border-b border-line">
@@ -103,24 +128,20 @@ export default function SystemLogs({ logs }) {
                 </td>
                 <td className="px-5 py-3.5 sm:px-6">
                   <span className="font-mono text-sm font-semibold text-ink">
-                    #{row.bib}
+                    {row.detectedCount}
+                  </span>
+                  <span className="ml-1 text-xs text-ink-faint">
+                    {row.detectedCount === 1 ? "bib" : "bibs"}
                   </span>
                 </td>
                 <td className="px-5 py-3.5 sm:px-6">
-                  <ConfidencePill value={row.confidence} />
+                  <ConfidenceCell value={row.avgConfidence} />
                 </td>
                 <td className="whitespace-nowrap px-5 py-3.5 font-mono text-xs text-ink-muted sm:px-6">
                   {row.processingTime}
                 </td>
                 <td className="px-5 py-3.5 sm:px-6">
-                  <div className="flex items-center gap-1">
-                    <RowAction label={`Copy bib ${row.bib}`}>
-                      <CopyIcon className="h-4 w-4" />
-                    </RowAction>
-                    <RowAction label={`Export entry for ${row.source}`}>
-                      <ExportIcon className="h-4 w-4" />
-                    </RowAction>
-                  </div>
+                  <StatusBadge status={row.status} />
                 </td>
               </tr>
             ))}
@@ -154,17 +175,5 @@ export default function SystemLogs({ logs }) {
         </span>
       </div>
     </section>
-  );
-}
-
-function RowAction({ children, label }) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition-colors hover:bg-surface-2 hover:text-accent-cyan"
-    >
-      {children}
-    </button>
   );
 }
