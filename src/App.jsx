@@ -12,9 +12,19 @@ import {
   averageConfidence,
   timestamp,
 } from "./lib/detections";
-import { currentImage as demoImage, systemLogs, stats } from "./data/mockData";
+import { currentImage as demoImage, systemLogs } from "./data/mockData";
+import { ENGINE_LABEL } from "./config";
 
 let logSeq = 0;
+
+const INITIAL_AGG = {
+  photos: 0, // successful analyses this session
+  bibs: 0, // total detections accumulated
+  confSum: 0, // running sum of every detection's confidence (0–1)
+  confCount: 0,
+  latencySum: 0, // running sum of processing_time (seconds)
+  latencyCount: 0,
+};
 
 export default function App() {
   // Upload / analysis state.
@@ -24,6 +34,7 @@ export default function App() {
   const [status, setStatus] = useState("idle"); // idle | ready | loading | done | error
   const [error, setError] = useState(null);
   const [logs, setLogs] = useState(systemLogs);
+  const [agg, setAgg] = useState(INITIAL_AGG);
 
   const isDemo = status === "idle";
 
@@ -58,6 +69,15 @@ export default function App() {
       const normalized = normalizeDetectionResponse(data);
       setResult(normalized);
       setStatus("done");
+      setAgg((a) => ({
+        photos: a.photos + 1,
+        bibs: a.bibs + normalized.detections.length,
+        confSum:
+          a.confSum + normalized.detections.reduce((s, d) => s + d.confidence, 0),
+        confCount: a.confCount + normalized.detections.length,
+        latencySum: a.latencySum + (normalized.processingSeconds ?? 0),
+        latencyCount: a.latencyCount + (normalized.processingSeconds != null ? 1 : 0),
+      }));
       setLogs((prev) => [
         {
           id: `log-${(logSeq += 1)}`,
@@ -100,14 +120,34 @@ export default function App() {
         filename: demoImage.filename,
         resolution: demoImage.resolution,
         processingTime: demoImage.processingTime,
-        model: demoImage.model,
+        model: ENGINE_LABEL,
       }
     : {
         filename: result?.filename ?? file?.name ?? "upload",
         resolution: null,
         processingTime: formatSeconds(result?.processingSeconds),
-        model: demoImage.model,
+        model: ENGINE_LABEL,
       };
+
+  // KPI cards computed live from this session's analyses.
+  const statCards = [
+    { id: "photos", label: "Photos Processed", value: String(agg.photos) },
+    { id: "bibs", label: "Bibs Detected", value: agg.bibs.toLocaleString() },
+    {
+      id: "conf",
+      label: "Avg Confidence",
+      value: agg.confCount
+        ? `${((agg.confSum / agg.confCount) * 100).toFixed(1)}%`
+        : "0.0%",
+    },
+    {
+      id: "latency",
+      label: "Avg Latency",
+      value: agg.latencyCount
+        ? `${(agg.latencySum / agg.latencyCount).toFixed(2)}s`
+        : "0.00s",
+    },
+  ];
 
   return (
     <div className="min-h-screen text-ink">
@@ -142,7 +182,7 @@ export default function App() {
 
         {/* Stats */}
         <div className="mt-6">
-          <StatsStrip stats={stats} />
+          <StatsStrip stats={statCards} />
         </div>
 
         {/* Two-column work area */}

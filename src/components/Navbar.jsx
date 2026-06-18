@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ScanIcon, BellIcon, SettingsIcon, MenuIcon, CloseIcon } from "./Icons";
+import { ScanIcon, BellIcon, SettingsIcon, MenuIcon, CloseIcon, UserIcon } from "./Icons";
 
 const NAV_ITEMS = ["Dashboard", "History", "Analytics", "Archives"];
 
@@ -72,15 +72,10 @@ export default function Navbar() {
 
           <button
             type="button"
-            className="ml-1 flex items-center gap-2 rounded-full border border-line bg-surface py-1 pl-1 pr-3 transition-colors hover:border-line-strong"
-            aria-label="Account menu for Riley Chen"
+            className="ml-1 grid h-9 w-9 place-items-center rounded-full border border-line bg-surface text-ink-muted transition-colors hover:border-line-strong hover:text-ink"
+            aria-label="Account"
           >
-            <span className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-accent to-accent-cyan font-mono text-xs font-semibold text-canvas">
-              RC
-            </span>
-            <span className="hidden text-sm font-medium text-ink-muted sm:inline">
-              Riley Chen
-            </span>
+            <UserIcon className="h-[18px] w-[18px]" />
           </button>
 
           {/* Mobile menu toggle */}

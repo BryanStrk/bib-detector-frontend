@@ -9,7 +9,6 @@ export const currentImage = {
   filename: "marathon_2026_finish_0421.jpg",
   resolution: "4032 × 3024",
   processingTime: "1.84s",
-  model: "YOLOv8-bib · v3.2",
   detections: [
     { id: "d1", bib: "4092", confidence: 0.98, box: { x: 13, y: 26, w: 17, h: 22 } },
     { id: "d2", bib: "1187", confidence: 0.93, box: { x: 41, y: 31, w: 15, h: 20 } },
@@ -78,12 +77,4 @@ export const systemLogs = [
     processingTime: "1.91s",
     status: "Processed",
   },
-];
-
-/** Top-line stats shown as a strip under the navbar. */
-export const stats = [
-  { id: "s1", label: "Photos Processed", value: "1,248" },
-  { id: "s2", label: "Bibs Detected", value: "9,532" },
-  { id: "s3", label: "Avg Confidence", value: "91.4%" },
-  { id: "s4", label: "Avg Latency", value: "1.78s" },
 ];
