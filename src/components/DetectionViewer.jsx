@@ -60,6 +60,7 @@ export default function DetectionViewer({
   model,
   onSelectFile,
   onRunAnalysis,
+  readOnly = false, // hide Upload/Run actions (e.g. gallery detail view)
 }) {
   const fileInputRef = useRef(null);
   // Natural size is tagged with the image URL it was measured for, so a stale
@@ -108,32 +109,34 @@ export default function DetectionViewer({
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleFileChange}
-          />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-sm font-medium text-ink transition-colors hover:border-line-strong hover:bg-elevated"
-          >
-            <UploadIcon className="h-[18px] w-[18px] text-ink-muted" />
-            Upload Batch
-          </button>
-          <button
-            type="button"
-            onClick={onRunAnalysis}
-            disabled={!canAnalyze || isLoading}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-cyan px-4 py-2.5 text-sm font-semibold text-canvas shadow-[0_4px_18px_rgba(34,211,238,0.3)] transition-[filter,opacity] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <PlayIcon className="h-4 w-4" />
-            {isLoading ? "Analyzing…" : "Run Analysis"}
-          </button>
-        </div>
+        {!readOnly && (
+          <div className="flex items-center gap-2.5">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-sm font-medium text-ink transition-colors hover:border-line-strong hover:bg-elevated"
+            >
+              <UploadIcon className="h-[18px] w-[18px] text-ink-muted" />
+              Upload Batch
+            </button>
+            <button
+              type="button"
+              onClick={onRunAnalysis}
+              disabled={!canAnalyze || isLoading}
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-cyan px-4 py-2.5 text-sm font-semibold text-canvas shadow-[0_4px_18px_rgba(34,211,238,0.3)] transition-[filter,opacity] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <PlayIcon className="h-4 w-4" />
+              {isLoading ? "Analyzing…" : "Run Analysis"}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* viewer */}
