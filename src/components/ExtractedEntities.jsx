@@ -32,14 +32,23 @@ function EntityRow({ detection, index }) {
 }
 
 export default function ExtractedEntities({ detections }) {
+  const isEmpty = detections.length === 0;
+
   const handleExport = () => {
-    // Mock export — log the payload that would be downloaded.
-    const payload = detections.map(({ bib, confidence, box }) => ({
+    const payload = detections.map(({ bib, confidence, bbox, box }) => ({
       bib,
       confidence,
-      box,
+      bbox: bbox ?? box ?? null,
     }));
-    console.log("Export JSON:", JSON.stringify(payload, null, 2));
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "detections.json";
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -59,16 +68,27 @@ export default function ExtractedEntities({ detections }) {
         Bib numbers recognized in the current frame
       </p>
 
-      <ul className="mt-4 flex flex-1 flex-col gap-2.5">
-        {detections.map((d, i) => (
-          <EntityRow key={d.id} detection={d} index={i} />
-        ))}
-      </ul>
+      {isEmpty ? (
+        <div className="mt-4 flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-line py-12 text-center">
+          <span className="font-mono text-2xl text-ink-faint">{"{ }"}</span>
+          <p className="text-sm text-ink-muted">No entities yet</p>
+          <p className="max-w-[14rem] text-xs text-ink-faint">
+            Upload a race photo and run analysis to extract bib numbers.
+          </p>
+        </div>
+      ) : (
+        <ul className="mt-4 flex flex-1 flex-col gap-2.5">
+          {detections.map((d, i) => (
+            <EntityRow key={d.id} detection={d} index={i} />
+          ))}
+        </ul>
+      )}
 
       <button
         type="button"
         onClick={handleExport}
-        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-accent-cyan/50 hover:bg-elevated"
+        disabled={isEmpty}
+        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-accent-cyan/50 hover:bg-elevated disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-line"
       >
         <ExportIcon className="h-[18px] w-[18px] text-accent-cyan" />
         Export JSON
