@@ -2,8 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import PhotoCard from "../components/PhotoCard";
 import PhotoModal from "../components/PhotoModal";
 import { SearchIcon, CloseIcon } from "../components/Icons";
-import { getPhotos } from "../services/detectionApi";
+import { getPhotos, deletePhoto, SessionExpiredError } from "../services/detectionApi";
 import { normalizePhoto } from "../lib/detections";
+import { useAuth } from "../context/auth-context";
 
 const LIMIT = 24;
 
@@ -25,6 +26,8 @@ export default function Gallery() {
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+  const { token, logout, openLoginPrompt } = useAuth();
 
   // Fetch a page. All state updates happen after the await (or in catch/
   // finally), so this is safe to call from an effect without synchronous
@@ -98,6 +101,32 @@ export default function Gallery() {
     setStatus("loading");
     setError(null);
     fetchPage(activeBib, 0, false);
+  }
+
+  // Admin-only: confirm, delete on the backend, then drop the card locally
+  // (no full reload). A 401 means the session expired — clear it and re-prompt.
+  async function handleDelete(photo) {
+    if (!photo?.id || deletingId) return;
+    const ok = window.confirm(
+      "Delete this photo? This also removes it from storage.",
+    );
+    if (!ok) return;
+
+    setDeletingId(photo.id);
+    try {
+      await deletePhoto(photo.id, token);
+      setPhotos((prev) => prev.filter((p) => p.id !== photo.id));
+      setSelected((cur) => (cur?.id === photo.id ? null : cur));
+    } catch (err) {
+      if (err instanceof SessionExpiredError) {
+        logout();
+        openLoginPrompt();
+      } else {
+        window.alert(err.message || "Could not delete the photo.");
+      }
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   const isEmpty = status === "ready" && photos.length === 0;
@@ -179,7 +208,13 @@ export default function Gallery() {
           <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {photos.map((photo) => (
-                <PhotoCard key={photo.id} photo={photo} onOpen={setSelected} />
+                <PhotoCard
+                  key={photo.id}
+                  photo={photo}
+                  onOpen={setSelected}
+                  onDelete={handleDelete}
+                  deleting={deletingId === photo.id}
+                />
               ))}
             </div>
 
@@ -204,6 +239,8 @@ export default function Gallery() {
           key={selected.id}
           photo={selected}
           onClose={() => setSelected(null)}
+          onDelete={handleDelete}
+          deleting={deletingId === selected.id}
         />
       )}
     </main>
