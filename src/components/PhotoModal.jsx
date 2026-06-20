@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import DetectionViewer from "./DetectionViewer";
 import ExtractedEntities from "./ExtractedEntities";
-import { CloseIcon } from "./Icons";
+import { CloseIcon, TrashIcon } from "./Icons";
 import { getPhoto } from "../services/detectionApi";
 import { normalizePhoto, formatSeconds, formatDate } from "../lib/detections";
 import { ENGINE_LABEL } from "../config";
+import { useAuth } from "../context/auth-context";
 
-export default function PhotoModal({ photo, onClose }) {
+export default function PhotoModal({ photo, onClose, onDelete, deleting = false }) {
+  const { isAdmin } = useAuth();
   // Render the list data immediately, then enrich from /photos/{id}.
   const [detail, setDetail] = useState(photo);
   const closeRef = useRef(null);
@@ -70,15 +72,28 @@ export default function PhotoModal({ photo, onClose }) {
               {detail.detections.length} detections · {formatDate(detail.createdAt)}
             </p>
           </div>
-          <button
-            ref={closeRef}
-            type="button"
-            onClick={onClose}
-            aria-label="Close detail"
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-line bg-surface-2 text-ink-muted transition-colors hover:border-line-strong hover:text-ink"
-          >
-            <CloseIcon className="h-5 w-5" />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => onDelete?.(detail)}
+                disabled={deleting}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-conf-low/50 bg-conf-low/10 px-3 py-2 text-sm font-medium text-conf-low transition-colors hover:bg-conf-low/20 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <TrashIcon className="h-4 w-4" />
+                {deleting ? "Deleting…" : "Delete"}
+              </button>
+            )}
+            <button
+              ref={closeRef}
+              type="button"
+              onClick={onClose}
+              aria-label="Close detail"
+              className="grid h-9 w-9 place-items-center rounded-lg border border-line bg-surface-2 text-ink-muted transition-colors hover:border-line-strong hover:text-ink"
+            >
+              <CloseIcon className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         {/* body — same two-column layout as the dashboard */}
