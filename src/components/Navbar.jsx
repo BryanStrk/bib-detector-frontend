@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { ScanIcon, BellIcon, SettingsIcon, MenuIcon, CloseIcon, UserIcon } from "./Icons";
+import { ScanIcon, BellIcon, SettingsIcon, MenuIcon, CloseIcon, LockIcon } from "./Icons";
+import { useAuth } from "../context/auth-context";
 
 // Route links use the router (with active state); the rest are in-page anchors
 // that scroll to dashboard sections, matching the prior behavior.
@@ -31,6 +32,7 @@ function Logo() {
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { isAdmin, logout, openLoginPrompt } = useAuth();
 
   return (
     <header
@@ -61,13 +63,24 @@ export default function Navbar() {
             <SettingsIcon className="h-[18px] w-[18px]" />
           </IconButton>
 
-          <button
-            type="button"
-            className="ml-1 grid h-9 w-9 place-items-center rounded-full border border-line bg-surface text-ink-muted transition-colors hover:border-line-strong hover:text-ink"
-            aria-label="Account"
-          >
-            <UserIcon className="h-[18px] w-[18px]" />
-          </button>
+          {isAdmin ? (
+            <button
+              type="button"
+              onClick={logout}
+              className="ml-1 inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:border-line-strong hover:text-ink"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={openLoginPrompt}
+              className="ml-1 inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:border-line-strong hover:text-ink"
+            >
+              <LockIcon className="h-4 w-4" />
+              <span className="hidden sm:inline">Admin</span>
+            </button>
+          )}
 
           {/* Mobile menu toggle */}
           <button
