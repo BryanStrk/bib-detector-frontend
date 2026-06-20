@@ -107,3 +107,87 @@ export async function getPhoto(id) {
     "Could not reach the photo service. Is the backend running?",
   );
 }
+
+/**
+ * Authenticate as an admin via the OAuth2 password flow.
+ *
+ * The endpoint expects `application/x-www-form-urlencoded` FORM data (NOT
+ * JSON) — `URLSearchParams` sets that content type and encoding for us.
+ *
+ * @param {string} username
+ * @param {string} password
+ * @returns {Promise<string>} The bearer `access_token`.
+ * @throws {Error} On bad credentials, network failure, or a missing token.
+ */
+export async function login(username, password) {
+  requireBaseUrl();
+
+  const body = new URLSearchParams();
+  body.set("username", username);
+  body.set("password", password);
+
+  let response;
+  try {
+    response = await fetch(`${BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+    });
+  } catch {
+    throw new Error("Could not reach the auth service. Is the backend running?");
+  }
+
+  const data = await parseResponse(response);
+  const accessToken = data?.access_token;
+  if (!accessToken) {
+    throw new Error("Login succeeded but no access token was returned.");
+  }
+  return accessToken;
+}
+
+/** Raised when a protected request is rejected with 401 (token expired). */
+export class SessionExpiredError extends Error {
+  constructor(message = "Your session expired. Please log in again.") {
+    super(message);
+    this.name = "SessionExpiredError";
+  }
+}
+
+/**
+ * Delete a persisted photo (and its stored image). Admin only.
+ *
+ * @param {string|number} id
+ * @param {string} token The admin bearer token.
+ * @throws {SessionExpiredError} On 401 (token missing/expired).
+ * @throws {Error} On other non-2xx statuses or network failure.
+ */
+export async function deletePhoto(id, token) {
+  requireBaseUrl();
+
+  let response;
+  try {
+    response = await fetch(`${BASE_URL}/photos/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch {
+    throw new Error("Could not reach the photo service. Is the backend running?");
+  }
+
+  if (response.status === 401) {
+    throw new SessionExpiredError();
+  }
+  if (!response.ok) {
+    let detail = "";
+    try {
+      const errBody = await response.json();
+      detail = errBody?.detail || errBody?.message || "";
+    } catch {
+      // no JSON body — fall back to the status text
+    }
+    throw new Error(
+      `Could not delete the photo (${response.status} ${response.statusText})` +
+        (detail ? `: ${detail}` : ""),
+    );
+  }
+}
