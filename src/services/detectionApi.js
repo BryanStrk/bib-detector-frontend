@@ -191,3 +191,122 @@ export async function deletePhoto(id, token) {
     );
   }
 }
+
+// ───────────────────────── Runner claim flow ─────────────────────────
+// Public photo-claim journey: pick an event + bib + email, verify the
+// emailed magic link, then browse your own photos with a runner token.
+
+/**
+ * Fetch the list of public events for the claim form.
+ * @returns {Promise<Array<{id:string|number, name:string, slug:string,
+ *   event_date:string, participant_count:number}>>}
+ */
+export async function getEvents() {
+  return getJson(
+    "/events",
+    "Could not reach the events service. Is the backend running?",
+  );
+}
+
+/**
+ * Request a photo claim. The backend always responds neutrally (202) whether
+ * or not the details match, so we never reveal a match — the caller shows a
+ * fixed neutral message.
+ *
+ * @param {{eventId: string|number, bibNumber: string, email: string}} params
+ * @throws {Error} On network failure or a non-2xx (e.g. validation) status.
+ */
+export async function requestClaim({ eventId, bibNumber, email }) {
+  requireBaseUrl();
+
+  let response;
+  try {
+    response = await fetch(`${BASE_URL}/claims`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event_id: eventId,
+        bib_number: bibNumber,
+        email,
+      }),
+    });
+  } catch {
+    throw new Error("Could not reach the claims service. Is the backend running?");
+  }
+
+  // 202 is neutral and may carry no JSON body — don't insist on one. Only
+  // surface true failures (validation, server errors) using the shared style.
+  if (!response.ok) {
+    let detail = "";
+    try {
+      const errBody = await response.json();
+      detail = errBody?.detail || errBody?.message || "";
+    } catch {
+      // no JSON body — fall back to the status text
+    }
+    throw new Error(
+      `Request failed (${response.status} ${response.statusText})` +
+        (detail ? `: ${detail}` : ""),
+    );
+  }
+}
+
+/**
+ * Verify an emailed claim link and exchange its token for a runner session.
+ *
+ * @param {string} token The single-use token from the `?token=` query param.
+ * @returns {Promise<string>} The runner bearer `access_token`.
+ * @throws {Error} "Invalid or expired link" on 400/401 or a missing token.
+ */
+export async function verifyClaim(token) {
+  requireBaseUrl();
+
+  let response;
+  try {
+    response = await fetch(`${BASE_URL}/claims/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    });
+  } catch {
+    throw new Error(
+      "Could not reach the verification service. Is the backend running?",
+    );
+  }
+
+  if (response.status === 400 || response.status === 401) {
+    throw new Error("Invalid or expired link");
+  }
+
+  const data = await parseResponse(response);
+  const accessToken = data?.access_token;
+  if (!accessToken) {
+    throw new Error("Invalid or expired link");
+  }
+  return accessToken;
+}
+
+/**
+ * Fetch the signed-in runner's own photos. Detections are filtered to the
+ * runner's bib server-side, and `cloudinary_url` is a signed original.
+ *
+ * @param {string} token The runner bearer token.
+ * @throws {SessionExpiredError} On 401 (token missing/expired).
+ */
+export async function getMyPhotos(token) {
+  requireBaseUrl();
+
+  let response;
+  try {
+    response = await fetch(`${BASE_URL}/me/photos`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch {
+    throw new Error("Could not reach the photo service. Is the backend running?");
+  }
+
+  if (response.status === 401) {
+    throw new SessionExpiredError();
+  }
+  return parseResponse(response);
+}
