@@ -35,6 +35,9 @@ export function normalizePhoto(raw) {
   return {
     id: String(raw.id ?? raw._id ?? raw.photo_id ?? ""),
     cloudinaryUrl: raw.cloudinary_url ?? raw.cloudinaryUrl ?? raw.url ?? null,
+    // Watermarked preview for authenticated/runner photos (cloudinary_url is
+    // null for those). Older records only have cloudinary_url.
+    previewUrl: raw.preview_url ?? raw.previewUrl ?? null,
     filename: raw.filename ?? "photo",
     createdAt: raw.created_at ?? raw.createdAt ?? raw.created ?? null,
     processingSeconds:

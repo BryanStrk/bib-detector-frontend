@@ -19,13 +19,15 @@ export default function PhotoCard({ photo, onOpen, onDelete, deleting = false })
   const bibs = uniqueBibs(photo.detections);
   const shown = bibs.slice(0, MAX_CHIPS);
   const overflow = bibs.length - shown.length;
-  const thumb = cloudinaryThumb(photo.cloudinaryUrl);
+  // Prefer the watermarked preview when present (runner/authenticated photos);
+  // fall back to the Cloudinary URL for older public records.
+  const thumb = cloudinaryThumb(photo.previewUrl ?? photo.cloudinaryUrl);
 
   // The card itself is a <button>; the admin Delete control is a sibling inside
   // this relative wrapper so we never nest interactive buttons.
   return (
     <div className="group relative flex flex-col">
-      {isAdmin && (
+      {isAdmin && onDelete && (
         <button
           type="button"
           onClick={() => onDelete?.(photo)}

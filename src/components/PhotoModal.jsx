@@ -1,13 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import DetectionViewer from "./DetectionViewer";
 import ExtractedEntities from "./ExtractedEntities";
-import { CloseIcon, TrashIcon } from "./Icons";
+import { CloseIcon, TrashIcon, DownloadIcon } from "./Icons";
 import { getPhoto } from "../services/detectionApi";
 import { normalizePhoto, formatSeconds, formatDate } from "../lib/detections";
 import { ENGINE_LABEL } from "../config";
 import { useAuth } from "../context/auth-context";
 
-export default function PhotoModal({ photo, onClose, onDelete, deleting = false }) {
+export default function PhotoModal({
+  photo,
+  onClose,
+  onDelete,
+  deleting = false,
+  // When true (the public/admin gallery), re-fetch authoritative detections
+  // from /photos/{id}. Runner photos come pre-enriched, so callers pass false.
+  enrich = true,
+  // Optional signed original to expose via a "Download original" action.
+  downloadUrl,
+}) {
   const { isAdmin } = useAuth();
   // Render the list data immediately, then enrich from /photos/{id}.
   const [detail, setDetail] = useState(photo);
@@ -18,7 +28,7 @@ export default function PhotoModal({ photo, onClose, onDelete, deleting = false 
   // (Gallery keys this modal by photo id, so it remounts per photo.)
   useEffect(() => {
     let cancelled = false;
-    if (!photo?.id) return undefined;
+    if (!enrich || !photo?.id) return undefined;
     getPhoto(photo.id)
       .then((data) => {
         const full = normalizePhoto(data);
@@ -30,7 +40,7 @@ export default function PhotoModal({ photo, onClose, onDelete, deleting = false 
     return () => {
       cancelled = true;
     };
-  }, [photo]);
+  }, [photo, enrich]);
 
   // Escape to close, lock body scroll, manage focus.
   useEffect(() => {
@@ -73,7 +83,19 @@ export default function PhotoModal({ photo, onClose, onDelete, deleting = false 
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            {isAdmin && (
+            {downloadUrl && (
+              <a
+                href={downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm font-medium text-ink transition-colors hover:border-line-strong hover:bg-elevated"
+              >
+                <DownloadIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Download original</span>
+              </a>
+            )}
+            {isAdmin && onDelete && (
               <button
                 type="button"
                 onClick={() => onDelete?.(detail)}
@@ -101,7 +123,7 @@ export default function PhotoModal({ photo, onClose, onDelete, deleting = false 
           <DetectionViewer
             readOnly
             isDemo={false}
-            imageUrl={detail.cloudinaryUrl}
+            imageUrl={detail.cloudinaryUrl ?? detail.previewUrl}
             detections={detail.detections}
             status="done"
             error={null}
