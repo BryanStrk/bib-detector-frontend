@@ -144,3 +144,12 @@ export function LockIcon(props) {
     </svg>
   );
 }
+
+export function DownloadIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 4v12M8 12l4 4 4-4" />
+      <path d="M4 18v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1" />
+    </svg>
+  );
+}
