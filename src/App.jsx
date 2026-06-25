@@ -3,6 +3,9 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Dashboard from "./pages/Dashboard";
 import Gallery from "./pages/Gallery";
+import Claim from "./pages/Claim";
+import ClaimVerify from "./pages/ClaimVerify";
+import MyPhotos from "./pages/MyPhotos";
 
 export default function App() {
   return (
@@ -19,6 +22,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/gallery" element={<Gallery />} />
+        <Route path="/claim" element={<Claim />} />
+        <Route path="/claim/verify" element={<ClaimVerify />} />
+        <Route path="/my-photos" element={<MyPhotos />} />
       </Routes>
 
       <Footer />
