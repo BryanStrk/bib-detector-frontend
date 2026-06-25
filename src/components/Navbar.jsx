@@ -56,6 +56,14 @@ export default function Navbar() {
 
         {/* Right cluster */}
         <div className="flex items-center gap-1.5 sm:gap-2">
+          <Link
+            to="/claim"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-accent to-accent-cyan px-3 py-2 text-sm font-medium text-canvas shadow-[0_4px_16px_rgba(34,211,238,0.35)] transition-[filter] hover:brightness-110"
+          >
+            <ScanIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Claim photos</span>
+          </Link>
+
           <IconButton label="Notifications" badge>
             <BellIcon className="h-[18px] w-[18px]" />
           </IconButton>
