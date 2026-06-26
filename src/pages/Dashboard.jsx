@@ -12,6 +12,7 @@ import {
 } from "../lib/detections";
 import { currentImage as demoImage, systemLogs } from "../data/mockData";
 import { ENGINE_LABEL } from "../config";
+import { useSettings } from "../context/settings-context";
 
 let logSeq = 0;
 
@@ -35,6 +36,8 @@ export default function Dashboard() {
   const [agg, setAgg] = useState(INITIAL_AGG);
   // Detection hovered in the entities panel, highlighted in the viewer.
   const [hoveredId, setHoveredId] = useState(null);
+  // Global minimum-confidence threshold (from the Settings popover).
+  const { minConfidence } = useSettings();
 
   const isDemo = status === "idle";
 
@@ -105,12 +108,14 @@ export default function Dashboard() {
     }
   }, [file]);
 
-  // What the viewer + entities panel render.
-  const detections = isDemo
+  // What the viewer + entities panel render. The session metrics (agg) keep
+  // counting every detection; only what's *shown* honors the threshold.
+  const rawDetections = isDemo
     ? demoImage.detections
     : status === "done" && result
       ? result.detections
       : [];
+  const detections = rawDetections.filter((d) => d.confidence >= minConfidence);
 
   const viewerProps = isDemo
     ? {

@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { ScanIcon, BellIcon, SettingsIcon, MenuIcon, CloseIcon, LockIcon } from "./Icons";
 import { useAuth } from "../context/auth-context";
+import { useSettings } from "../context/settings-context";
 
 // Route links use the router (with active state); the rest are in-page anchors
 // that scroll to dashboard sections, matching the prior behavior.
@@ -67,9 +68,7 @@ export default function Navbar() {
           <IconButton label="Notifications" badge>
             <BellIcon className="h-[18px] w-[18px]" />
           </IconButton>
-          <IconButton label="Settings">
-            <SettingsIcon className="h-[18px] w-[18px]" />
-          </IconButton>
+          <SettingsMenu />
 
           {isAdmin ? (
             <button
@@ -183,5 +182,81 @@ function IconButton({ children, label, badge = false }) {
         <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-accent ring-2 ring-surface" />
       )}
     </button>
+  );
+}
+
+// Gear button + popover for global detection settings (minimum confidence).
+function SettingsMenu() {
+  const [open, setOpen] = useState(false);
+  const { minConfidence, setMinConfidence } = useSettings();
+  const wrapperRef = useRef(null);
+
+  // Close on outside click or Escape while the popover is open.
+  useEffect(() => {
+    if (!open) return undefined;
+    const onPointerDown = (e) => {
+      if (!wrapperRef.current?.contains(e.target)) setOpen(false);
+    };
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  const pct = Math.round(minConfidence * 100);
+
+  return (
+    <div className="relative" ref={wrapperRef}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-label="Settings"
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        className="grid h-9 w-9 place-items-center rounded-lg border border-line bg-surface text-ink-muted transition-colors hover:border-line-strong hover:text-ink"
+      >
+        <SettingsIcon className="h-[18px] w-[18px]" />
+      </button>
+
+      {open && (
+        <div
+          role="dialog"
+          aria-label="Detection settings"
+          className="absolute right-0 top-full z-50 mt-2 w-72 rounded-xl border border-line bg-surface p-4 shadow-[0_16px_48px_rgba(0,0,0,0.5)]"
+        >
+          <p className="text-[11px] font-medium uppercase tracking-wider text-ink-faint">
+            Detection settings
+          </p>
+
+          <div className="mt-3 flex items-center justify-between">
+            <label htmlFor="min-confidence" className="text-sm font-medium text-ink">
+              Minimum confidence
+            </label>
+            <span className="font-mono text-sm text-ink">{pct}%</span>
+          </div>
+
+          <input
+            id="min-confidence"
+            type="range"
+            min={0}
+            max={100}
+            step={5}
+            value={pct}
+            onChange={(e) => setMinConfidence(Number(e.target.value) / 100)}
+            aria-label="Minimum confidence threshold"
+            className="mt-3 w-full accent-accent"
+          />
+
+          <p className="mt-2 text-xs text-ink-faint">
+            Detections below this confidence are hidden.
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
