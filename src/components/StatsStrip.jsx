@@ -5,7 +5,7 @@ export default function StatsStrip({ stats }) {
       {stats.map((stat) => (
         <div
           key={stat.id}
-          className="rounded-xl border border-line bg-surface/70 px-5 py-5"
+          className="rounded-xl border border-line bg-surface/70 px-5 py-5 transition-colors hover:border-line-strong"
         >
           <dt className="text-[11px] font-medium uppercase tracking-wider text-ink-faint">
             {stat.label}
