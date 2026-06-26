@@ -2,41 +2,44 @@
 
 /* ──────────────────────────────────────────────────────────────
    Bib Detector — design tokens (Tailwind v4 @theme)
-   Dark premium dashboard: deep slate base, electric blue→cyan accent.
+   Computer-vision instrument: cool neutral base, single sober
+   technical-blue accent. Color is reserved for data, not decoration.
    ────────────────────────────────────────────────────────────── */
+
 @theme {
-  /* Surfaces */
-  --color-canvas: #0f1117;
-  --color-surface: #161922;
-  --color-surface-2: #1c202b;
-  --color-elevated: #21262f;
+  /* Surfaces — cool neutral grays with a faint blue cast */
+  --color-canvas: #0a0c10;
+  --color-surface: #11141a;
+  --color-surface-2: #181c23;
+  --color-elevated: #1e232b;
 
   /* Borders & lines */
-  --color-line: #262b36;
-  --color-line-strong: #333a47;
+  --color-line: #222731;
+  --color-line-strong: #313845;
 
   /* Text */
-  --color-ink: #e8ebf2;
-  --color-ink-muted: #9aa3b2;
-  --color-ink-faint: #5d6675;
+  --color-ink: #e6e9ef;
+  --color-ink-muted: #8b93a1;
+  --color-ink-faint: #565e6c;
 
-  /* Accent (electric blue → cyan) */
-  --color-accent: #3b82f6;
-  --color-accent-cyan: #22d3ee;
-  --color-accent-soft: #1e293b;
+  /* Accent — a single, sober technical blue. No gradient pair. */
+  --color-accent: #4f9cf9;
+  --color-accent-strong: #3b82f6;
+  --color-accent-soft: #16202e;
 
-  /* Confidence semantics */
-  --color-conf-high: #34d399;
-  --color-conf-mid: #fbbf24;
-  --color-conf-low: #f87171;
+  /* Confidence semantics — color here encodes real data (detection
+     confidence), so it stays saturated and meaningful. */
+  --color-conf-high: #3ddc97;
+  --color-conf-mid: #f0b429;
+  --color-conf-low: #ef6461;
 
   /* Typography */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
 
-  /* Radii */
-  --radius-card: 16px;
-  --radius-ctl: 12px;
+  /* Radii — slightly tighter for a more instrument-like feel */
+  --radius-card: 12px;
+  --radius-ctl: 8px;
 }
 
 html {
@@ -52,21 +55,23 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Ambient backdrop glow */
+/* Ambient backdrop — a faint technical grid instead of colored glows.
+   Reads as graph paper / measurement surface, not neon. */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
-  background:
-    radial-gradient(60rem 40rem at 15% -10%, rgba(59, 130, 246, 0.08), transparent 60%),
-    radial-gradient(50rem 36rem at 110% 10%, rgba(34, 211, 238, 0.06), transparent 55%);
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 44px 44px;
   pointer-events: none;
 }
 
 /* Consistent, visible focus ring everywhere */
-:where(a, button, input, [tabindex]):focus-visible {
-  outline: 2px solid var(--color-accent-cyan);
+:where(a, button, input, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: 6px;
 }

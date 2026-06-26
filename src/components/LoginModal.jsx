@@ -60,7 +60,7 @@ export default function LoginModal({ onClose }) {
         {/* header */}
         <div className="flex items-center justify-between gap-3 border-b border-line p-4 sm:px-6">
           <div className="flex items-center gap-2.5">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-accent to-accent-cyan text-canvas shadow-[0_4px_16px_rgba(34,211,238,0.35)]">
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-accent text-canvas">
               <LockIcon className="h-[18px] w-[18px] text-canvas" />
             </span>
             <h2 className="text-sm font-semibold tracking-wide text-ink">
@@ -91,7 +91,7 @@ export default function LoginModal({ onClose }) {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="w-full rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-accent-cyan/60 focus:outline-none"
+              className="w-full rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-accent/60 focus:outline-none"
             />
           </div>
 
@@ -106,7 +106,7 @@ export default function LoginModal({ onClose }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-accent-cyan/60 focus:outline-none"
+              className="w-full rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-accent/60 focus:outline-none"
             />
           </div>
 
@@ -122,7 +122,7 @@ export default function LoginModal({ onClose }) {
           <button
             type="submit"
             disabled={submitting}
-            className="mt-1 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-cyan px-4 py-2.5 text-sm font-semibold text-canvas shadow-[0_4px_18px_rgba(34,211,238,0.3)] transition-[filter] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-1 inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-canvas transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? "Signing in…" : "Sign in"}
           </button>

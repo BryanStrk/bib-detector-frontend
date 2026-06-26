@@ -13,7 +13,7 @@ const COLUMNS = [
 
 const STATUS_STYLES = {
   Processed: "border-conf-high/40 bg-conf-high/10 text-conf-high",
-  Processing: "border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan",
+  Processing: "border-accent/40 bg-accent/10 text-accent",
   Failed: "border-conf-low/40 bg-conf-low/10 text-conf-low",
 };
 
@@ -89,7 +89,7 @@ export default function SystemLogs({ logs }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search logs…"
-            className="w-full rounded-xl border border-line bg-surface-2 py-2.5 pl-10 pr-3 text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-accent-cyan/60 focus:outline-none"
+            className="w-full rounded-xl border border-line bg-surface-2 py-2.5 pl-10 pr-3 text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-accent/60 focus:outline-none"
           />
         </div>
       </div>

@@ -39,7 +39,7 @@ export default function ClaimVerify() {
         {status === "verifying" ? (
           <div className="flex flex-col items-center gap-4">
             <span
-              className="h-9 w-9 rounded-full border-2 border-line border-t-accent-cyan"
+              className="h-9 w-9 rounded-full border-2 border-line border-t-accent"
               style={{ animation: "spin 0.8s linear infinite" }}
             />
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
@@ -57,7 +57,7 @@ export default function ClaimVerify() {
             </p>
             <Link
               to="/claim"
-              className="mt-2 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-cyan px-4 py-2.5 text-sm font-semibold text-canvas shadow-[0_4px_18px_rgba(34,211,238,0.3)] transition-[filter] hover:brightness-110"
+              className="mt-2 inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-canvas transition-colors hover:bg-accent-strong"
             >
               Request a new link
             </Link>

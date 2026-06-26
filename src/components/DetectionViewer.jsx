@@ -98,7 +98,7 @@ export default function DetectionViewer({
       {/* header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="grid h-10 w-10 place-items-center rounded-xl border border-line bg-surface-2 text-accent-cyan">
+          <span className="grid h-10 w-10 place-items-center rounded-xl border border-line bg-surface-2 text-accent">
             <ScanIcon className="h-5 w-5" />
           </span>
           <div>
@@ -130,7 +130,7 @@ export default function DetectionViewer({
               type="button"
               onClick={onRunAnalysis}
               disabled={!canAnalyze || isLoading}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-cyan px-4 py-2.5 text-sm font-semibold text-canvas shadow-[0_4px_18px_rgba(34,211,238,0.3)] transition-[filter,opacity] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-canvas transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50"
             >
               <PlayIcon className="h-4 w-4" />
               {isLoading ? "Analyzing…" : "Run Analysis"}
@@ -214,7 +214,7 @@ export default function DetectionViewer({
           <div className="flex items-center gap-2 font-mono text-xs">
             <ClockIcon className="h-4 w-4 text-ink-faint" />
             <span className="text-ink-muted">Processed in</span>
-            <span className="font-semibold text-accent-cyan">
+            <span className="font-semibold text-accent">
               {isLoading ? "…" : status === "done" || isDemo ? processingTime : "—"}
             </span>
           </div>
@@ -246,7 +246,7 @@ function ViewerOverlays({ isLoading, overlays, count, showCount }) {
       {isLoading && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div
-            className="absolute inset-x-0 h-24 bg-gradient-to-b from-transparent via-accent-cyan/25 to-transparent"
+            className="absolute inset-x-0 h-24 bg-gradient-to-b from-transparent via-accent/25 to-transparent"
             style={{ animation: "scan-sweep 1.4s ease-in-out infinite" }}
           />
           <style>{`@keyframes scan-sweep{0%{top:-30%}100%{top:110%}}`}</style>
@@ -259,7 +259,7 @@ function ViewerOverlays({ isLoading, overlays, count, showCount }) {
 
       <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full border border-line/80 bg-canvas/80 px-2.5 py-1 backdrop-blur">
         <span
-          className="h-1.5 w-1.5 rounded-full bg-accent-cyan"
+          className="h-1.5 w-1.5 rounded-full bg-accent"
           style={{ animation: "pulse-soft 1.8s ease-in-out infinite" }}
         />
         <span className="font-mono text-xs text-ink-muted">

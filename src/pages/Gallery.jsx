@@ -132,21 +132,21 @@ export default function Gallery() {
   const isEmpty = status === "ready" && photos.length === 0;
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <main id="main" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       {/* heading */}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+          <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl lg:text-5xl">
             Gallery
           </h1>
-          <p className="mt-1.5 text-sm text-ink-muted">
+          <p className="mt-2 max-w-2xl text-base text-ink-muted">
             Browse persisted detections from the backend. Search by bib number.
           </p>
         </div>
       </div>
 
       {/* search */}
-      <form onSubmit={handleSubmit} className="mt-6 flex flex-wrap items-center gap-2.5">
+      <form onSubmit={handleSubmit} className="mt-8 flex flex-wrap items-center gap-2.5 sm:mt-10">
         <div className="relative min-w-0 flex-1 sm:max-w-sm">
           <label htmlFor="bib-search" className="sr-only">
             Search photos by bib number
@@ -159,12 +159,12 @@ export default function Gallery() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by bib number…"
-            className="w-full rounded-xl border border-line bg-surface-2 py-2.5 pl-10 pr-3 font-mono text-sm text-ink placeholder:font-sans placeholder:text-ink-faint focus:border-accent-cyan/60 focus:outline-none"
+            className="w-full rounded-xl border border-line bg-surface-2 py-2.5 pl-10 pr-3 font-mono text-sm text-ink placeholder:font-sans placeholder:text-ink-faint focus:border-accent/60 focus:outline-none"
           />
         </div>
         <button
           type="submit"
-          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-cyan px-4 py-2.5 text-sm font-semibold text-canvas shadow-[0_4px_18px_rgba(34,211,238,0.3)] transition-[filter] hover:brightness-110"
+          className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-canvas transition-colors hover:bg-accent-strong"
         >
           Search
         </button>
@@ -188,7 +188,7 @@ export default function Gallery() {
       )}
 
       {/* content */}
-      <div className="mt-6">
+      <div className="mt-8 sm:mt-10">
         {status === "loading" && <GallerySkeleton />}
 
         {status === "error" && <ErrorState message={error} onRetry={handleRetry} />}
@@ -224,7 +224,7 @@ export default function Gallery() {
                   type="button"
                   onClick={handleLoadMore}
                   disabled={loadingMore}
-                  className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface-2 px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:border-accent-cyan/50 hover:bg-elevated disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface-2 px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:border-accent/50 hover:bg-elevated disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {loadingMore ? "Loading…" : "Load more"}
                 </button>

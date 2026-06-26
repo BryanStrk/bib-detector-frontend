@@ -13,11 +13,11 @@ export default function Footer() {
         <div className="grid gap-8 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-accent to-accent-cyan">
+              <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent">
                 <ScanIcon className="h-[18px] w-[18px] text-canvas" />
               </span>
               <span className="text-sm font-bold tracking-[0.18em] text-ink">
-                BIB<span className="text-accent-cyan"> DETECTOR</span>
+                BIB<span className="text-accent"> DETECTOR</span>
               </span>
             </div>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink-muted">
@@ -36,7 +36,7 @@ export default function Footer() {
                   <li key={link}>
                     <a
                       href="#top"
-                      className="text-sm text-ink-muted transition-colors hover:text-accent-cyan"
+                      className="text-sm text-ink-muted transition-colors hover:text-accent"
                     >
                       {link}
                     </a>

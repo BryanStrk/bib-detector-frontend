@@ -20,11 +20,11 @@ function Logo() {
       className="flex items-center gap-2.5 rounded-lg focus-visible:outline-none"
       aria-label="Bib Detector home"
     >
-      <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-accent to-accent-cyan text-canvas shadow-[0_4px_16px_rgba(34,211,238,0.35)]">
+      <span className="grid h-9 w-9 place-items-center rounded-xl bg-accent text-canvas">
         <ScanIcon className="h-5 w-5 text-canvas" />
       </span>
       <span className="text-[15px] font-bold tracking-[0.18em] text-ink">
-        BIB<span className="text-accent-cyan"> DETECTOR</span>
+        BIB<span className="text-accent"> DETECTOR</span>
       </span>
     </Link>
   );
@@ -58,7 +58,7 @@ export default function Navbar() {
         <div className="flex items-center gap-1.5 sm:gap-2">
           <Link
             to="/claim"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-accent to-accent-cyan px-3 py-2 text-sm font-medium text-canvas shadow-[0_4px_16px_rgba(34,211,238,0.35)] transition-[filter] hover:brightness-110"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-canvas transition-colors hover:bg-accent-strong"
           >
             <ScanIcon className="h-4 w-4" />
             <span className="hidden sm:inline">Claim photos</span>
@@ -163,7 +163,7 @@ function NavItem({ item, mobile = false, onNavigate }) {
         <>
           {item.label}
           {!mobile && isActive && (
-            <span className="absolute inset-x-3 -bottom-[1px] h-0.5 rounded-full bg-gradient-to-r from-accent to-accent-cyan" />
+            <span className="absolute inset-x-3 -bottom-[1px] h-0.5 rounded-full bg-accent" />
           )}
         </>
       )}
@@ -180,7 +180,7 @@ function IconButton({ children, label, badge = false }) {
     >
       {children}
       {badge && (
-        <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-accent-cyan ring-2 ring-surface" />
+        <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-accent ring-2 ring-surface" />
       )}
     </button>
   );

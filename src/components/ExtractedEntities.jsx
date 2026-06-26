@@ -88,9 +88,9 @@ export default function ExtractedEntities({ detections }) {
         type="button"
         onClick={handleExport}
         disabled={isEmpty}
-        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-accent-cyan/50 hover:bg-elevated disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-line"
+        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-accent/50 hover:bg-elevated disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-line"
       >
-        <ExportIcon className="h-[18px] w-[18px] text-accent-cyan" />
+        <ExportIcon className="h-[18px] w-[18px] text-accent" />
         Export JSON
       </button>
     </section>

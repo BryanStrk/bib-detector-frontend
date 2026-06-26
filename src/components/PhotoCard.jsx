@@ -64,7 +64,7 @@ export default function PhotoCard({ photo, onOpen, onDelete, deleting = false })
 
           {/* detection count badge */}
           <span className="absolute right-2.5 top-2.5 flex items-center gap-1.5 rounded-full border border-line/80 bg-canvas/80 px-2.5 py-1 font-mono text-xs text-ink backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent-cyan" />
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
             {photo.detections.length}
           </span>
         </div>

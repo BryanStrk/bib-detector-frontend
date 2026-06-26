@@ -64,10 +64,10 @@ export default function Claim() {
   return (
     <main id="main" className="mx-auto max-w-lg px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
       <div className="text-center">
-        <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+        <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl lg:text-5xl">
           Claim your race photos
         </h1>
-        <p className="mt-2 text-sm text-ink-muted">
+        <p className="mx-auto mt-2 max-w-2xl text-base text-ink-muted">
           Pick your event, enter your bib number and email. We&apos;ll send you a
           secure link to view the photos you appear in.
         </p>
@@ -85,7 +85,7 @@ export default function Claim() {
       <div className="mt-8 rounded-2xl border border-line bg-surface/70 p-5 shadow-[0_8px_40px_rgba(0,0,0,0.35)] sm:p-6">
         {submitted ? (
           <div className="flex flex-col items-center gap-3 py-6 text-center">
-            <span className="grid h-11 w-11 place-items-center rounded-full bg-accent-soft font-mono text-lg text-accent-cyan">
+            <span className="grid h-11 w-11 place-items-center rounded-full bg-accent-soft font-mono text-lg text-accent">
               ✓
             </span>
             <p className="text-base font-medium text-ink">Check your inbox</p>
@@ -103,7 +103,7 @@ export default function Claim() {
                 value={eventId}
                 onChange={(e) => setEventId(e.target.value)}
                 disabled={eventsStatus !== "ready"}
-                className="w-full rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-accent-cyan/60 focus:outline-none disabled:opacity-60"
+                className="w-full rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-accent/60 focus:outline-none disabled:opacity-60"
               >
                 <option value="">
                   {eventsStatus === "loading"
@@ -132,7 +132,7 @@ export default function Claim() {
                 value={bibNumber}
                 onChange={(e) => setBibNumber(e.target.value)}
                 placeholder="e.g. 1042"
-                className="w-full rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 font-mono text-sm text-ink placeholder:font-sans placeholder:text-ink-faint focus:border-accent-cyan/60 focus:outline-none"
+                className="w-full rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 font-mono text-sm text-ink placeholder:font-sans placeholder:text-ink-faint focus:border-accent/60 focus:outline-none"
               />
             </div>
 
@@ -148,7 +148,7 @@ export default function Claim() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-accent-cyan/60 focus:outline-none"
+                className="w-full rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-accent/60 focus:outline-none"
               />
             </div>
 
@@ -165,7 +165,7 @@ export default function Claim() {
               type="button"
               onClick={handleSubmit}
               disabled={submitting}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-cyan px-4 py-2.5 text-sm font-semibold text-canvas shadow-[0_4px_18px_rgba(34,211,238,0.3)] transition-[filter] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-canvas transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitting ? "Sending…" : "Send me the link"}
             </button>
