@@ -59,14 +59,14 @@ export default function MyPhotos() {
   const isEmpty = status === "ready" && photos.length === 0;
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <main id="main" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       {/* heading */}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+          <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl lg:text-5xl">
             My photos
           </h1>
-          <p className="mt-1.5 text-sm text-ink-muted">
+          <p className="mt-2 max-w-2xl text-base text-ink-muted">
             Photos you appear in. Open one to view and download the original.
           </p>
         </div>
@@ -80,7 +80,7 @@ export default function MyPhotos() {
       </div>
 
       {/* content */}
-      <div className="mt-6">
+      <div className="mt-8 sm:mt-10">
         {status === "loading" && <GallerySkeleton />}
 
         {status === "error" && (
