@@ -5,10 +5,12 @@ export default function StatsStrip({ stats }) {
       {stats.map((stat) => (
         <div
           key={stat.id}
-          className="rounded-xl border border-line bg-surface/70 px-4 py-3.5"
+          className="rounded-xl border border-line bg-surface/70 px-5 py-5"
         >
-          <dt className="text-xs text-ink-faint">{stat.label}</dt>
-          <dd className="mt-1 font-mono text-xl font-semibold tracking-tight text-ink">
+          <dt className="text-[11px] font-medium uppercase tracking-wider text-ink-faint">
+            {stat.label}
+          </dt>
+          <dd className="mt-2 font-mono text-2xl font-semibold tracking-tight text-ink sm:text-4xl">
             {stat.value}
           </dd>
         </div>

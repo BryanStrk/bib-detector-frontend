@@ -145,14 +145,14 @@ export default function Dashboard() {
   ];
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <main id="main" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       {/* Page heading */}
       <div id="dashboard" className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+          <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl lg:text-5xl">
             Detection Dashboard
           </h1>
-          <p className="mt-1.5 text-sm text-ink-muted">
+          <p className="mt-2 max-w-2xl text-base text-ink-muted">
             Upload race photos and extract athlete bib numbers in real time.
           </p>
         </div>
@@ -166,12 +166,12 @@ export default function Dashboard() {
       </div>
 
       {/* Stats */}
-      <div className="mt-6">
+      <div className="mt-8 sm:mt-10">
         <StatsStrip stats={statCards} />
       </div>
 
       {/* Two-column work area */}
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.65fr_1fr]">
+      <div className="mt-8 grid gap-6 sm:mt-10 lg:grid-cols-[1.65fr_1fr]">
         <DetectionViewer
           isDemo={isDemo}
           imageUrl={previewUrl}
@@ -186,7 +186,7 @@ export default function Dashboard() {
       </div>
 
       {/* Full-width logs */}
-      <div className="mt-6">
+      <div className="mt-8 sm:mt-10">
         <SystemLogs logs={logs} />
       </div>
     </main>
