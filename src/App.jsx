@@ -6,6 +6,8 @@ import Gallery from "./pages/Gallery";
 import Claim from "./pages/Claim";
 import ClaimVerify from "./pages/ClaimVerify";
 import MyPhotos from "./pages/MyPhotos";
+import History from "./pages/History";
+import Analytics from "./pages/Analytics";
 
 export default function App() {
   return (
@@ -25,6 +27,8 @@ export default function App() {
         <Route path="/claim" element={<Claim />} />
         <Route path="/claim/verify" element={<ClaimVerify />} />
         <Route path="/my-photos" element={<MyPhotos />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/analytics" element={<Analytics />} />
       </Routes>
 
       <Footer />
