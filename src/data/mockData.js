@@ -6,14 +6,15 @@
  * `box` coordinates are percentages of the image (x, y = top-left corner).
  */
 export const currentImage = {
-  filename: "marathon_2026_finish_0421.jpg",
-  resolution: "4032 × 3024",
+  filename: "race_finish_demo.jpg",
+  resolution: "1300 × 731",
   processingTime: "1.84s",
   detections: [
-    { id: "d1", bib: "4092", confidence: 0.98, box: { x: 13, y: 26, w: 17, h: 22 } },
-    { id: "d2", bib: "1187", confidence: 0.93, box: { x: 41, y: 31, w: 15, h: 20 } },
-    { id: "d3", bib: "2056", confidence: 0.81, box: { x: 66, y: 24, w: 16, h: 21 } },
-    { id: "d4", bib: "7734", confidence: 0.64, box: { x: 83, y: 44, w: 13, h: 18 } },
+    { id: "d1", bib: "462", confidence: 0.97, box: { x: 40, y: 37, w: 7, h: 11 } },
+    { id: "d2", bib: "745", confidence: 0.71, box: { x: 57, y: 51, w: 4, h: 8 } },
+    { id: "d3", bib: "820", confidence: 0.92, box: { x: 66, y: 37, w: 5, h: 10 } },
+    { id: "d4", bib: "951", confidence: 0.85, box: { x: 78, y: 30, w: 5, h: 9 } },
+    { id: "d5", bib: "154", confidence: 0.68, box: { x: 91, y: 38, w: 5, h: 9 } },
   ],
 };
 

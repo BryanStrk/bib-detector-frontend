@@ -143,7 +143,7 @@ export default function DetectionViewer({
       <div className="relative mt-5 overflow-hidden rounded-xl border border-line bg-canvas">
         {isDemo ? (
           /* Demo / empty state: the self-contained SVG race scene. */
-          <div className="relative aspect-[4/3] w-full">
+          <div className="relative aspect-[1296/729] w-full">
             <RacePhoto className="absolute inset-0 h-full w-full" />
             <ViewerOverlays
               isLoading={isLoading}
