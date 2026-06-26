@@ -303,7 +303,7 @@ export default function Analytics() {
                       <Tooltip
                         {...TOOLTIP_PROPS}
                         cursor={{ stroke: TOKENS.line }}
-                        formatter={(value) => [`${value}s`, "Latency"]}
+                        formatter={(value) => [formatSeconds(value), "Latency"]}
                       />
                       <Line
                         type="monotone"
