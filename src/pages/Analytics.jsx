@@ -23,6 +23,7 @@ import {
   formatDate,
 } from "../lib/detections";
 import { confidenceTier, formatPct } from "../lib/confidence";
+import { useSettings } from "../context/settings-context";
 
 // Design tokens, mirrored from index.css so Recharts never falls back to its
 // own (light) defaults. Color is reserved for data, like the rest of the app.
@@ -79,6 +80,8 @@ export default function Analytics() {
   const [photos, setPhotos] = useState([]);
   const [status, setStatus] = useState("loading"); // loading | ready | error
   const [error, setError] = useState(null);
+  // Global minimum-confidence threshold (from the Settings popover).
+  const { minConfidence } = useSettings();
 
   useEffect(() => {
     let cancelled = false;
@@ -101,13 +104,20 @@ export default function Analytics() {
 
   // Aggregate metrics — derived from the normalized photos, no invented data.
   const metrics = useMemo(() => {
+    // Detection-based metrics honor the minimum-confidence threshold; latency
+    // metrics below stay on raw `photos` (independent of the threshold).
+    const photosFiltered = photos.map((p) => ({
+      ...p,
+      detections: p.detections.filter((d) => d.confidence >= minConfidence),
+    }));
+
     const totalPhotos = photos.length;
-    const totalBibs = photos.reduce(
+    const totalBibs = photosFiltered.reduce(
       (sum, p) => sum + uniqueBibs(p.detections).length,
       0,
     );
 
-    const photoAvgs = photos
+    const photoAvgs = photosFiltered
       .map((p) => averageConfidence(p.detections))
       .filter((v) => v != null);
     const avgConfidence = photoAvgs.length
@@ -122,7 +132,7 @@ export default function Analytics() {
       : null;
 
     const tierCounts = { high: 0, mid: 0, low: 0 };
-    for (const p of photos) {
+    for (const p of photosFiltered) {
       for (const d of p.detections) tierCounts[confidenceTier(d.confidence)] += 1;
     }
 
@@ -133,7 +143,7 @@ export default function Analytics() {
     ];
     const totalDetections = tierCounts.high + tierCounts.mid + tierCounts.low;
 
-    const bibsPerPhoto = photos.map((p, i) => ({
+    const bibsPerPhoto = photosFiltered.map((p, i) => ({
       name: shortLabel(p.filename),
       index: i + 1,
       bibs: uniqueBibs(p.detections).length,
@@ -154,7 +164,7 @@ export default function Analytics() {
       bibsPerPhoto,
       latencySeries,
     };
-  }, [photos]);
+  }, [photos, minConfidence]);
 
   const statCards = [
     { id: "photos", label: "Total Photos", value: String(metrics.totalPhotos) },
@@ -184,6 +194,11 @@ export default function Analytics() {
           <p className="mt-2 max-w-2xl text-base text-ink-muted">
             Detection performance across all processed photos.
           </p>
+          {minConfidence > 0 && (
+            <p className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-2.5 py-0.5 font-mono text-xs text-ink-muted">
+              Filtered to detections ≥ {formatPct(minConfidence)}
+            </p>
+          )}
         </div>
       </div>
 
