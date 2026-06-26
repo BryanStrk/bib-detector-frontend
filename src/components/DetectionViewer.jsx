@@ -13,6 +13,10 @@ function BoundingBox({ detection, pct, index, hoveredId }) {
   const isHighlighted = hoveredId === detection.id;
   const isDimmed = hoveredId != null && !isHighlighted;
 
+  // Boxes in the right half anchor their label to the right edge so it grows
+  // leftward (into the frame) instead of overflowing past the right border.
+  const alignRight = pct.x > 55;
+
   return (
     <div
       className={`absolute transition-all duration-500 ${isHighlighted ? "z-10" : ""}`}
@@ -44,7 +48,9 @@ function BoundingBox({ detection, pct, index, hoveredId }) {
         ),
       )}
       <span
-        className="absolute -top-6 left-0 flex items-center gap-1 whitespace-nowrap rounded-md px-1.5 py-0.5 font-mono text-[11px] font-semibold text-canvas"
+        className={`absolute -top-6 flex items-center gap-1 whitespace-nowrap rounded-md px-1 py-0.5 font-mono text-[9px] font-semibold text-canvas sm:px-1.5 sm:text-[11px] ${
+          alignRight ? "right-0" : "left-0"
+        }`}
         style={{ backgroundColor: color }}
       >
         #{detection.bib}
