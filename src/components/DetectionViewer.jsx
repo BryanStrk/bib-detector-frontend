@@ -75,6 +75,9 @@ export default function DetectionViewer({
   const [natural, setNatural] = useState(null); // {url, w, h}
   const measured = natural && natural.url === imageUrl ? natural : null;
 
+  // Demo-only: run the scan sweep while the pointer is over the image.
+  const [isScanning, setIsScanning] = useState(false);
+
   const isLoading = status === "loading";
   const showBoxes = isDemo || status === "done";
   const canAnalyze = status === "ready" || status === "done" || status === "error";
@@ -150,10 +153,16 @@ export default function DetectionViewer({
       <div className="relative mt-5 overflow-hidden rounded-xl border border-line bg-canvas">
         {isDemo ? (
           /* Demo / empty state: the self-contained SVG race scene. */
-          <div className="relative aspect-[1296/729] w-full">
+          <div
+            className="relative aspect-[1296/729] w-full"
+            onMouseEnter={() => setIsScanning(true)}
+            onMouseLeave={() => setIsScanning(false)}
+          >
             <RacePhoto className="absolute inset-0 h-full w-full" />
             <ViewerOverlays
               isLoading={isLoading}
+              isDemo={isDemo}
+              scanning={isScanning}
               overlays={overlays}
               count={detections.length}
               showCount={showBoxes}
@@ -179,6 +188,8 @@ export default function DetectionViewer({
               />
               <ViewerOverlays
                 isLoading={isLoading}
+                isDemo={isDemo}
+                scanning={false}
                 overlays={overlays}
                 count={detections.length}
                 showCount={showBoxes}
@@ -247,18 +258,40 @@ export default function DetectionViewer({
 }
 
 /** Shared overlay layer (boxes, scanning sweep, count chip, vignette). */
-function ViewerOverlays({ isLoading, overlays, count, showCount, hoveredId }) {
+function ViewerOverlays({ isLoading, scanning, overlays, count, showCount, hoveredId }) {
+  // The scanner runs while a real analysis is processing, and — in demo — only
+  // while the pointer hovers the image. Loading is faster + brighter to signal
+  // active work; the demo hover sweep is medium-paced and elegant.
+  const showSweep = isLoading || scanning;
+
   return (
     <>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-canvas/55 via-transparent to-transparent" />
 
-      {isLoading && (
+      {showSweep && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          {/* A crisp scan line with a soft trail, both sweeping together. */}
           <div
-            className="absolute inset-x-0 h-24 bg-gradient-to-b from-transparent via-accent/25 to-transparent"
-            style={{ animation: "scan-sweep 1.4s ease-in-out infinite" }}
-          />
-          <style>{`@keyframes scan-sweep{0%{top:-30%}100%{top:110%}}`}</style>
+            className="scan-sweep-track absolute inset-x-0"
+            style={{
+              animation: `scan-sweep ${isLoading ? "1.6s" : "2s"} ease-in-out infinite`,
+              opacity: isLoading ? 1 : 0.6,
+            }}
+          >
+            {/* trail — fades in toward the leading line below it */}
+            <div className="h-20 bg-gradient-to-b from-accent/0 to-accent/25" />
+            {/* leading line — thin, bright, with a subtle glow */}
+            <div
+              className="h-px w-full bg-accent"
+              style={{ boxShadow: "0 0 8px var(--color-accent)" }}
+            />
+          </div>
+          <style>{`
+            @keyframes scan-sweep { 0% { top: -30%; } 100% { top: 110%; } }
+            @media (prefers-reduced-motion: reduce) {
+              .scan-sweep-track { display: none; }
+            }
+          `}</style>
         </div>
       )}
 
@@ -278,7 +311,7 @@ function ViewerOverlays({ isLoading, overlays, count, showCount, hoveredId }) {
           style={{ animation: "pulse-soft 1.8s ease-in-out infinite" }}
         />
         <span className="font-mono text-xs text-ink-muted">
-          {isLoading ? "scanning…" : showCount ? `${count} bibs` : "—"}
+          {isLoading || scanning ? "scanning…" : showCount ? `${count} bibs` : "—"}
         </span>
       </div>
     </>
