@@ -21,7 +21,6 @@ const NAV_ITEMS = [
   { label: "Gallery", to: "/gallery" },
   { label: "History", to: "/history" },
   { label: "Analytics", to: "/analytics" },
-  { label: "Archives", href: "/#archives" },
 ];
 
 function Logo() {
@@ -133,7 +132,7 @@ export default function Navbar() {
 }
 
 function NavItem({ item, mobile = false, onNavigate }) {
-  // In-page anchor (History/Analytics/Archives) — never shows route-active.
+  // In-page anchor (item with `href`) — never shows route-active.
   if (item.href) {
     return (
       <a
