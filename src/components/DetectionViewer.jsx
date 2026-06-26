@@ -6,26 +6,32 @@ import { bboxToPercent } from "../lib/detections";
 
 const BOX_COLOR = { high: "#34d399", mid: "#fbbf24", low: "#f87171" };
 
-function BoundingBox({ detection, pct, index }) {
+function BoundingBox({ detection, pct, index, hoveredId }) {
   const tier = confidenceTier(detection.confidence);
   const color = BOX_COLOR[tier];
 
+  const isHighlighted = hoveredId === detection.id;
+  const isDimmed = hoveredId != null && !isHighlighted;
+
   return (
     <div
-      className="absolute transition-all duration-500"
+      className={`absolute transition-all duration-500 ${isHighlighted ? "z-10" : ""}`}
       style={{
         left: `${pct.x}%`,
         top: `${pct.y}%`,
         width: `${pct.w}%`,
         height: `${pct.h}%`,
         transitionDelay: `${index * 90}ms`,
+        opacity: isDimmed ? 0.35 : 1,
       }}
     >
       <div
         className="h-full w-full rounded-md"
         style={{
-          border: `2px solid ${color}`,
-          boxShadow: `0 0 0 1px rgba(0,0,0,0.4), 0 0 14px ${color}55`,
+          border: `${isHighlighted ? 3 : 2}px solid ${color}`,
+          boxShadow: isHighlighted
+            ? `0 0 0 1px rgba(0,0,0,0.4), 0 0 20px ${color}aa`
+            : `0 0 0 1px rgba(0,0,0,0.4), 0 0 14px ${color}55`,
         }}
       />
       {["-top-px -left-px", "-top-px -right-px", "-bottom-px -left-px", "-bottom-px -right-px"].map(
@@ -61,6 +67,7 @@ export default function DetectionViewer({
   onSelectFile,
   onRunAnalysis,
   readOnly = false, // hide Upload/Run actions (e.g. gallery detail view)
+  hoveredId = null, // id of the detection hovered in the entities panel
 }) {
   const fileInputRef = useRef(null);
   // Natural size is tagged with the image URL it was measured for, so a stale
@@ -150,6 +157,7 @@ export default function DetectionViewer({
               overlays={overlays}
               count={detections.length}
               showCount={showBoxes}
+              hoveredId={hoveredId}
             />
           </div>
         ) : (
@@ -174,6 +182,7 @@ export default function DetectionViewer({
                 overlays={overlays}
                 count={detections.length}
                 showCount={showBoxes}
+                hoveredId={hoveredId}
               />
             </div>
           </div>
@@ -238,7 +247,7 @@ export default function DetectionViewer({
 }
 
 /** Shared overlay layer (boxes, scanning sweep, count chip, vignette). */
-function ViewerOverlays({ isLoading, overlays, count, showCount }) {
+function ViewerOverlays({ isLoading, overlays, count, showCount, hoveredId }) {
   return (
     <>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-canvas/55 via-transparent to-transparent" />
@@ -254,7 +263,13 @@ function ViewerOverlays({ isLoading, overlays, count, showCount }) {
       )}
 
       {overlays.map(({ detection, pct }, i) => (
-        <BoundingBox key={detection.id} detection={detection} pct={pct} index={i} />
+        <BoundingBox
+          key={detection.id}
+          detection={detection}
+          pct={pct}
+          index={i}
+          hoveredId={hoveredId}
+        />
       ))}
 
       <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full border border-line/80 bg-canvas/80 px-2.5 py-1 backdrop-blur">

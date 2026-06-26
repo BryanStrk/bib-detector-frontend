@@ -2,12 +2,16 @@ import ConfidenceBar from "./ConfidenceBar";
 import { ExportIcon } from "./Icons";
 import { confidenceTier, formatPct, TIER_STYLES } from "../lib/confidence";
 
-function EntityRow({ detection, index }) {
+function EntityRow({ detection, index, onHover }) {
   const tier = confidenceTier(detection.confidence);
   const styles = TIER_STYLES[tier];
 
   return (
-    <li className="group rounded-xl border border-line bg-surface-2/60 p-3.5 transition-colors hover:border-line-strong hover:bg-surface-2">
+    <li
+      onMouseEnter={() => onHover?.(detection.id)}
+      onMouseLeave={() => onHover?.(null)}
+      className="group cursor-default rounded-xl border border-line bg-surface-2/60 p-3.5 transition-colors hover:border-line-strong hover:bg-surface-2"
+    >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <span className="font-mono text-[10px] text-ink-faint">
@@ -31,7 +35,7 @@ function EntityRow({ detection, index }) {
   );
 }
 
-export default function ExtractedEntities({ detections }) {
+export default function ExtractedEntities({ detections, onHover }) {
   const isEmpty = detections.length === 0;
 
   const handleExport = () => {
@@ -79,7 +83,7 @@ export default function ExtractedEntities({ detections }) {
       ) : (
         <ul className="mt-4 flex flex-1 flex-col gap-2.5">
           {detections.map((d, i) => (
-            <EntityRow key={d.id} detection={d} index={i} />
+            <EntityRow key={d.id} detection={d} index={i} onHover={onHover} />
           ))}
         </ul>
       )}

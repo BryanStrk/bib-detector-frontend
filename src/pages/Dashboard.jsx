@@ -33,6 +33,8 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [logs, setLogs] = useState(systemLogs);
   const [agg, setAgg] = useState(INITIAL_AGG);
+  // Detection hovered in the entities panel, highlighted in the viewer.
+  const [hoveredId, setHoveredId] = useState(null);
 
   const isDemo = status === "idle";
 
@@ -180,9 +182,10 @@ export default function Dashboard() {
           error={error}
           onSelectFile={handleSelectFile}
           onRunAnalysis={handleRunAnalysis}
+          hoveredId={hoveredId}
           {...viewerProps}
         />
-        <ExtractedEntities detections={detections} />
+        <ExtractedEntities detections={detections} onHover={setHoveredId} />
       </div>
 
       {/* Full-width logs */}
