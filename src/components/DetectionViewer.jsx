@@ -74,6 +74,7 @@ export default function DetectionViewer({
   onRunAnalysis,
   readOnly = false, // hide Upload/Run actions (e.g. gallery detail view)
   hoveredId = null, // id of the detection hovered in the entities panel
+  slowLoading = false, // analysis is taking a while (backend likely waking up)
 }) {
   const fileInputRef = useRef(null);
   // Natural size is tagged with the image URL it was measured for, so a stale
@@ -202,6 +203,19 @@ export default function DetectionViewer({
                 hoveredId={hoveredId}
               />
             </div>
+          </div>
+        )}
+
+        {/* slow-loading notice — the HF Space may be waking from sleep */}
+        {isLoading && slowLoading && (
+          <div className="flex items-center gap-2.5 border-t border-line bg-surface/80 px-4 py-3">
+            <span
+              className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
+              style={{ animation: "pulse-soft 1.8s ease-in-out infinite" }}
+            />
+            <p className="text-xs text-ink-muted sm:text-sm">
+              Waking up the engine — the first request can take up to a minute.
+            </p>
           </div>
         )}
 

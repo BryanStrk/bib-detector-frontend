@@ -14,8 +14,6 @@ import { currentImage as demoImage, systemLogs } from "../data/mockData";
 import { ENGINE_LABEL } from "../config";
 import { useSettings } from "../context/settings-context";
 
-let logSeq = 0;
-
 const INITIAL_AGG = {
   photos: 0, // successful analyses this session
   bibs: 0, // total detections accumulated
@@ -38,8 +36,22 @@ export default function Dashboard() {
   const [hoveredId, setHoveredId] = useState(null);
   // Global minimum-confidence threshold (from the Settings popover).
   const { minConfidence } = useSettings();
+  // True once a "loading" request has dragged on (backend likely waking up).
+  const [slowLoading, setSlowLoading] = useState(false);
 
   const isDemo = status === "idle";
+
+  // After ~8s in "loading", surface a "waking up the engine" notice. The
+  // cleanup (which runs when loading ends — success, error, or unmount) clears
+  // the timer and resets the flag.
+  useEffect(() => {
+    if (status !== "loading") return undefined;
+    const timer = setTimeout(() => setSlowLoading(true), 8000);
+    return () => {
+      clearTimeout(timer);
+      setSlowLoading(false);
+    };
+  }, [status]);
 
   // Revoke the object URL when it's replaced or the component unmounts.
   useEffect(() => {
@@ -80,7 +92,7 @@ export default function Dashboard() {
       }));
       setLogs((prev) => [
         {
-          id: `log-${(logSeq += 1)}`,
+          id: `log-${crypto.randomUUID()}`,
           timestamp: timestamp(),
           source: normalized.filename || file.name,
           detectedCount: normalized.detections.length,
@@ -95,7 +107,7 @@ export default function Dashboard() {
       setError(err.message);
       setLogs((prev) => [
         {
-          id: `log-${(logSeq += 1)}`,
+          id: `log-${crypto.randomUUID()}`,
           timestamp: timestamp(),
           source: file.name,
           detectedCount: 0,
@@ -188,6 +200,7 @@ export default function Dashboard() {
           onSelectFile={handleSelectFile}
           onRunAnalysis={handleRunAnalysis}
           hoveredId={hoveredId}
+          slowLoading={slowLoading}
           {...viewerProps}
         />
         <ExtractedEntities detections={detections} onHover={setHoveredId} />
