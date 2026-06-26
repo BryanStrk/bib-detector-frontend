@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import {
   ScanIcon,
+  BibLogoIcon,
   BellIcon,
   SettingsIcon,
   ClockIcon,
@@ -31,7 +32,7 @@ function Logo() {
       aria-label="Bib Detector home"
     >
       <span className="grid h-9 w-9 place-items-center rounded-xl bg-accent text-canvas">
-        <ScanIcon className="h-5 w-5 text-canvas" />
+        <BibLogoIcon className="h-5 w-5 text-canvas" />
       </span>
       <span className="text-[15px] font-bold tracking-[0.18em] text-ink">
         BIB<span className="text-accent"> DETECTOR</span>

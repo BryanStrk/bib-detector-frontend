@@ -1,4 +1,4 @@
-import { ScanIcon } from "./Icons";
+import { BibLogoIcon } from "./Icons";
 
 const LINK_GROUPS = [
   { heading: "Product", links: ["Detection Engine", "Batch Processing", "API Access", "Changelog"] },
@@ -14,7 +14,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2.5">
               <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent">
-                <ScanIcon className="h-[18px] w-[18px] text-canvas" />
+                <BibLogoIcon className="h-[18px] w-[18px] text-canvas" />
               </span>
               <span className="text-sm font-bold tracking-[0.18em] text-ink">
                 BIB<span className="text-accent"> DETECTOR</span>
